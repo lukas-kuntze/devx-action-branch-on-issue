@@ -1,0 +1,56 @@
+name: 'Branch on Issue'
+description: 'Automatically creates a new branch upon issue creation, featuring intelligent name sanitization and robust duplicate handling.'
+author: 'Lukas Kuntze'
+
+branding:
+  icon: 'git-branch'
+  color: 'green'
+
+inputs:
+  add_comment:
+    description: 'If enabled, adds a comment to the issue containing the generated branch name.'
+    default: 'true'
+    required: false
+
+  base_branch:
+    description: 'The base branch from which new branches will be created.'
+    default: 'main'
+    required: false
+
+  branch_prefix:
+    description: 'Optional prefix for generated branch names (e.g., "feature" results in "feature/branch-name").'
+    default: ''
+    required: false
+
+  github_token:
+    description: 'GitHub token used for authenticating API requests.'
+    required: true
+
+  max_length:
+    description: 'Specifies the maximum allowed length for branch names.'
+    default: '100'
+    required: false
+
+  skip_labels:
+    description: 'Comma-separated list of labels that should prevent automatic branch creation.'
+    default: ''
+    required: false
+
+  use_label_prefix:
+    description: 'Determines whether issue labels should be used as branch prefixes.'
+    default: 'false'
+    required: false
+
+outputs:
+  branch_name:
+    description: 'The final name of the created branch.'
+
+  original_name:
+    description: 'The sanitized branch name before duplicate handling was applied.'
+
+  was_duplicate:
+    description: 'Indicates whether the initial branch name had to be modified due to duplication.'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
