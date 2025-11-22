@@ -34,13 +34,20 @@ function getIssueContext(): IssueContext {
     throw new Error('This action can only be triggered by issue events.');
   }
 
-  const labels = (payload.issue.labels || []).map((label: { name: string }) => label.name);
+  const issue = payload.issue as {
+    number: number;
+    title: string;
+    labels?: Array<{ name: string }>;
+    user?: { login: string };
+  };
+
+  const labels = (issue.labels || []).map((label) => label.name);
 
   return {
-    number: payload.issue.number,
-    title: payload.issue.title,
+    number: issue.number,
+    title: issue.title,
     labels,
-    author: payload.issue.user?.login || 'unknown',
+    author: issue.user?.login || 'unknown',
     owner: repo.owner,
     repo: repo.repo
   };

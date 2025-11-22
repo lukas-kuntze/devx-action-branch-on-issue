@@ -141,7 +141,7 @@ function sanitizeLabelPrefix(prefix: string): string {
   return prefix
     .toLowerCase()
     .replace(/[\s_/]+/g, '-')
-    .replace(/[^a-z0-9\-]/g, '')
+    .replace(/[^a-z0-9-]/g, '')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
