@@ -64,16 +64,25 @@ class BranchManager {
      * @param config - Sanitization configuration for branch name
      * @param baseBranch - Base branch to create the new branch from
      * @param addComment - Whether to add a comment to the issue with the branch name
+<<<<<<< HEAD
      * @param linkToIssue - Whether to link the branch to the issue using GraphQL
      * @returns Branch creation result with branch name and metadata
      */
     async createBranch(issueContext, config, baseBranch, addComment, linkToIssue = true) {
+=======
+     * @returns Branch creation result with branch name and metadata
+     */
+    async createBranch(issueContext, config, baseBranch, addComment) {
+>>>>>>> origin/develop
         core.info(`Creating branch for issue #${issueContext.number}: "${issueContext.title}"`);
         const sanitizedName = (0, sanitizer_1.sanitizeBranchName)(issueContext.title, config);
         core.debug(`Sanitized branch name: "${sanitizedName}"`);
         let finalBranchName = sanitizedName;
         let wasDuplicate = false;
+<<<<<<< HEAD
         let linkedToIssue = false;
+=======
+>>>>>>> origin/develop
         if (await this.branchExists(sanitizedName)) {
             core.warning(`Branch "${sanitizedName}" already exists. Handling duplicate...`);
             finalBranchName = await this.handleDuplicateBranch(sanitizedName);
@@ -81,6 +90,7 @@ class BranchManager {
         }
         const commitSha = await this.getBaseBranchSha(baseBranch);
         core.debug(`Base branch "${baseBranch}" SHA: ${commitSha}`);
+<<<<<<< HEAD
         if (linkToIssue && issueContext.nodeId) {
             try {
                 linkedToIssue = await this.createLinkedBranchViaGraphQL(issueContext.nodeId, finalBranchName, commitSha);
@@ -96,11 +106,28 @@ class BranchManager {
         }
         if (addComment) {
             await this.addCommentToIssue(issueContext.number, finalBranchName, linkedToIssue);
+=======
+        try {
+            await this.octokit.rest.git.createRef({
+                owner: this.owner,
+                repo: this.repo,
+                ref: `refs/heads/${finalBranchName}`,
+                sha: commitSha
+            });
+            core.info(`Branch "${finalBranchName}" created successfully.`);
+        }
+        catch (error) {
+            throw new Error(`Failed to create branch "${finalBranchName}": ${error.message}`);
+        }
+        if (addComment) {
+            await this.addCommentToIssue(issueContext.number, finalBranchName);
+>>>>>>> origin/develop
         }
         return {
             branchName: finalBranchName,
             originalName: sanitizedName,
             wasDuplicate,
+<<<<<<< HEAD
             commitSha,
             linkedToIssue
         };
@@ -163,6 +190,12 @@ class BranchManager {
         }
     }
     /**
+=======
+            commitSha
+        };
+    }
+    /**
+>>>>>>> origin/develop
      * Checks if a branch exists in the repository.
      *
      * @param branchName - Name of the branch to check
@@ -229,12 +262,19 @@ class BranchManager {
      *
      * @param issueNumber - Issue number to comment on
      * @param branchName - Name of the created branch
+<<<<<<< HEAD
      * @param isLinked - Whether the branch is linked to the issue
      */
     async addCommentToIssue(issueNumber, branchName, isLinked) {
         core.info(`Adding comment to issue #${issueNumber} with branch name "${branchName}".`);
         const linkedInfo = isLinked ? ' and linked to this issue in the Development section' : '';
         const commentBody = `Branch \`${branchName}\` has been created for this issue${linkedInfo}. 🚀`;
+=======
+     */
+    async addCommentToIssue(issueNumber, branchName) {
+        core.info(`Adding comment to issue #${issueNumber} with branch name "${branchName}".`);
+        const commentBody = `Branch \`${branchName}\` has been created for this issue. 🚀`;
+>>>>>>> origin/develop
         try {
             await this.octokit.rest.issues.createComment({
                 owner: this.owner,

@@ -29976,7 +29976,10 @@ function getInputs() {
         baseBranch: core.getInput('base_branch', { required: false }) || 'main',
         branchPrefix: core.getInput('branch_prefix', { required: false }) || '',
         githubToken: core.getInput('github_token', { required: true }),
+<<<<<<< HEAD
         linkToIssue: core.getBooleanInput('link_to_issue'),
+=======
+>>>>>>> origin/develop
         maxLength: parseInt(core.getInput('max_length', { required: false }) || '100', 10),
         skipLabels: core.getInput('skip_labels', { required: false }) || '',
         useLabelPrefix: core.getBooleanInput('use_label_prefix')
@@ -30001,8 +30004,12 @@ function getIssueContext() {
         labels,
         author: issue.user?.login || 'unknown',
         owner: repo.owner,
+<<<<<<< HEAD
         repo: repo.repo,
         nodeId: issue.node_id
+=======
+        repo: repo.repo
+>>>>>>> origin/develop
     };
 }
 /**
@@ -30033,7 +30040,10 @@ async function run() {
         core.info(`Max length: ${inputs.maxLength}`);
         core.info(`Use label prefix: ${inputs.useLabelPrefix}`);
         core.info(`Add comment: ${inputs.addComment}`);
+<<<<<<< HEAD
         core.info(`Link to issue: ${inputs.linkToIssue}`);
+=======
+>>>>>>> origin/develop
         core.info(`Skip labels: ${inputs.skipLabels || '(none)'}`);
         core.info(`GitHub API URL: ${githubApiUrl || '(default)'}`);
         (0, validators_1.validateInputs)(inputs);
@@ -30045,6 +30055,7 @@ async function run() {
             core.info(`Issue has skip label. Skipping branch creation.`);
             return;
         }
+<<<<<<< HEAD
         const prefix = inputs.useLabelPrefix && issueContext.labels.length > 0 ? issueContext.labels[0] : inputs.branchPrefix;
         const config = {
             prefix,
@@ -30056,6 +30067,19 @@ async function run() {
         core.setOutput('original_name', result.originalName);
         core.setOutput('was_duplicate', result.wasDuplicate.toString());
         core.setOutput('linked_to_issue', result.linkedToIssue.toString());
+=======
+        const config = {
+            maxLength: inputs.maxLength,
+            prefix: inputs.branchPrefix,
+            useLabelPrefix: inputs.useLabelPrefix,
+            labelPrefix: inputs.useLabelPrefix && issueContext.labels.length > 0 ? issueContext.labels[0] : undefined
+        };
+        const branchManager = new branch_manager_1.BranchManager(inputs.githubToken, issueContext.owner, issueContext.repo, githubApiUrl || undefined);
+        const result = await branchManager.createBranch(issueContext, config, inputs.baseBranch, inputs.addComment);
+        core.setOutput('branch_name', result.branchName);
+        core.setOutput('original_name', result.originalName);
+        core.setOutput('was_duplicate', result.wasDuplicate.toString());
+>>>>>>> origin/develop
         core.info('');
         core.info('Branch on Issue Action completed successfully.');
     }
@@ -30139,16 +30163,25 @@ class BranchManager {
      * @param config - Sanitization configuration for branch name
      * @param baseBranch - Base branch to create the new branch from
      * @param addComment - Whether to add a comment to the issue with the branch name
+<<<<<<< HEAD
      * @param linkToIssue - Whether to link the branch to the issue using GraphQL
      * @returns Branch creation result with branch name and metadata
      */
     async createBranch(issueContext, config, baseBranch, addComment, linkToIssue = true) {
+=======
+     * @returns Branch creation result with branch name and metadata
+     */
+    async createBranch(issueContext, config, baseBranch, addComment) {
+>>>>>>> origin/develop
         core.info(`Creating branch for issue #${issueContext.number}: "${issueContext.title}"`);
         const sanitizedName = (0, sanitizer_1.sanitizeBranchName)(issueContext.title, config);
         core.debug(`Sanitized branch name: "${sanitizedName}"`);
         let finalBranchName = sanitizedName;
         let wasDuplicate = false;
+<<<<<<< HEAD
         let linkedToIssue = false;
+=======
+>>>>>>> origin/develop
         if (await this.branchExists(sanitizedName)) {
             core.warning(`Branch "${sanitizedName}" already exists. Handling duplicate...`);
             finalBranchName = await this.handleDuplicateBranch(sanitizedName);
@@ -30156,6 +30189,7 @@ class BranchManager {
         }
         const commitSha = await this.getBaseBranchSha(baseBranch);
         core.debug(`Base branch "${baseBranch}" SHA: ${commitSha}`);
+<<<<<<< HEAD
         if (linkToIssue && issueContext.nodeId) {
             try {
                 linkedToIssue = await this.createLinkedBranchViaGraphQL(issueContext.nodeId, finalBranchName, commitSha);
@@ -30171,11 +30205,28 @@ class BranchManager {
         }
         if (addComment) {
             await this.addCommentToIssue(issueContext.number, finalBranchName, linkedToIssue);
+=======
+        try {
+            await this.octokit.rest.git.createRef({
+                owner: this.owner,
+                repo: this.repo,
+                ref: `refs/heads/${finalBranchName}`,
+                sha: commitSha
+            });
+            core.info(`Branch "${finalBranchName}" created successfully.`);
+        }
+        catch (error) {
+            throw new Error(`Failed to create branch "${finalBranchName}": ${error.message}`);
+        }
+        if (addComment) {
+            await this.addCommentToIssue(issueContext.number, finalBranchName);
+>>>>>>> origin/develop
         }
         return {
             branchName: finalBranchName,
             originalName: sanitizedName,
             wasDuplicate,
+<<<<<<< HEAD
             commitSha,
             linkedToIssue
         };
@@ -30238,6 +30289,12 @@ class BranchManager {
         }
     }
     /**
+=======
+            commitSha
+        };
+    }
+    /**
+>>>>>>> origin/develop
      * Checks if a branch exists in the repository.
      *
      * @param branchName - Name of the branch to check
@@ -30304,12 +30361,19 @@ class BranchManager {
      *
      * @param issueNumber - Issue number to comment on
      * @param branchName - Name of the created branch
+<<<<<<< HEAD
      * @param isLinked - Whether the branch is linked to the issue
      */
     async addCommentToIssue(issueNumber, branchName, isLinked) {
         core.info(`Adding comment to issue #${issueNumber} with branch name "${branchName}".`);
         const linkedInfo = isLinked ? ' and linked to this issue in the Development section' : '';
         const commentBody = `Branch \`${branchName}\` has been created for this issue${linkedInfo}. 🚀`;
+=======
+     */
+    async addCommentToIssue(issueNumber, branchName) {
+        core.info(`Adding comment to issue #${issueNumber} with branch name "${branchName}".`);
+        const commentBody = `Branch \`${branchName}\` has been created for this issue. 🚀`;
+>>>>>>> origin/develop
         try {
             await this.octokit.rest.issues.createComment({
                 owner: this.owner,
@@ -30371,7 +30435,10 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.convertUmlauts = convertUmlauts;
 exports.truncateToMaxLength = truncateToMaxLength;
 exports.sanitizeBranchName = sanitizeBranchName;
+<<<<<<< HEAD
 exports.validateBranchName = validateBranchName;
+=======
+>>>>>>> origin/develop
 const core = __importStar(__nccwpck_require__(7484));
 /**
  * Mapping of German umlauts and special characters to their ASCII equivalents.
@@ -30437,7 +30504,11 @@ function truncateToMaxLength(text, maxLength) {
  * 4. Removes all characters except alphanumeric, hyphens, and forward slashes
  * 5. Reduces multiple consecutive hyphens to a single hyphen
  * 6. Removes leading and trailing hyphens
+<<<<<<< HEAD
  * 7. Adds optional prefix (if provided)
+=======
+ * 7. Adds optional prefix (with or without label prefix)
+>>>>>>> origin/develop
  * 8. Truncates to maximum length
  *
  * @param text - Text to sanitize (typically an issue title)
@@ -30446,7 +30517,11 @@ function truncateToMaxLength(text, maxLength) {
  *
  * @example
  * ```typescript
+<<<<<<< HEAD
  * const config = { maxLength: 100, prefix: '' };
+=======
+ * const config = { maxLength: 100, prefix: '', useLabelPrefix: false };
+>>>>>>> origin/develop
  * sanitizeBranchName('FEAT-789 Neue Suchfunktion für Übersicht', config)
  * // Returns: 'feat-789-neue-suchfunktion-fuer-uebersicht'
  *
@@ -30465,10 +30540,22 @@ function sanitizeBranchName(text, config) {
     sanitized = sanitized.replace(/^-+|-+$/g, '');
     core.debug(`After sanitization: "${sanitized}"`);
     let finalName = sanitized;
+<<<<<<< HEAD
     if (config.prefix) {
         const sanitizedPrefix = sanitizeLabelPrefix(config.prefix);
         finalName = `${sanitizedPrefix}/${sanitized}`;
         core.debug(`Added prefix: "${finalName}"`);
+=======
+    if (config.useLabelPrefix && config.labelPrefix) {
+        const sanitizedLabelPrefix = sanitizeLabelPrefix(config.labelPrefix);
+        finalName = `${sanitizedLabelPrefix}/${sanitized}`;
+        core.debug(`Added label prefix: "${finalName}"`);
+    }
+    else if (config.prefix) {
+        const sanitizedPrefix = sanitizeLabelPrefix(config.prefix);
+        finalName = `${sanitizedPrefix}/${sanitized}`;
+        core.debug(`Added custom prefix: "${finalName}"`);
+>>>>>>> origin/develop
     }
     if (finalName.length > config.maxLength) {
         finalName = truncateToMaxLength(finalName, config.maxLength);
@@ -30498,6 +30585,7 @@ function sanitizeLabelPrefix(prefix) {
         .replace(/-+/g, '-')
         .replace(/^-+|-+$/g, '');
 }
+<<<<<<< HEAD
 /**
  * Validates a branch name according to Git naming rules.
  *
@@ -30522,6 +30610,8 @@ function validateBranchName(branchName) {
     ];
     return !invalidPatterns.some((pattern) => pattern.test(branchName));
 }
+=======
+>>>>>>> origin/develop
 
 
 /***/ }),
