@@ -50,12 +50,9 @@ outputs:
   branch_name:
     description: 'The final name of the created branch.'
 
-<<<<<<< HEAD
   linked_to_issue:
     description: 'Indicates whether the branch was successfully linked to the issue.'
 
-=======
->>>>>>> origin/develop
   original_name:
     description: 'The sanitized branch name before duplicate handling was applied.'
 
