@@ -15,10 +15,7 @@ function getInputs(): ActionInputs {
     baseBranch: core.getInput('base_branch', { required: false }) || 'main',
     branchPrefix: core.getInput('branch_prefix', { required: false }) || '',
     githubToken: core.getInput('github_token', { required: true }),
-<<<<<<< HEAD
     linkToIssue: core.getBooleanInput('link_to_issue'),
-=======
->>>>>>> origin/develop
     maxLength: parseInt(core.getInput('max_length', { required: false }) || '100', 10),
     skipLabels: core.getInput('skip_labels', { required: false }) || '',
     useLabelPrefix: core.getBooleanInput('use_label_prefix')
@@ -43,10 +40,7 @@ function getIssueContext(): IssueContext {
     title: string;
     labels?: Array<{ name: string }>;
     user?: { login: string };
-<<<<<<< HEAD
     node_id?: string;
-=======
->>>>>>> origin/develop
   };
 
   const labels = (issue.labels || []).map((label) => label.name);
@@ -57,12 +51,8 @@ function getIssueContext(): IssueContext {
     labels,
     author: issue.user?.login || 'unknown',
     owner: repo.owner,
-<<<<<<< HEAD
     repo: repo.repo,
     nodeId: issue.node_id
-=======
-    repo: repo.repo
->>>>>>> origin/develop
   };
 }
 
@@ -99,10 +89,7 @@ async function run(): Promise<void> {
     core.info(`Max length: ${inputs.maxLength}`);
     core.info(`Use label prefix: ${inputs.useLabelPrefix}`);
     core.info(`Add comment: ${inputs.addComment}`);
-<<<<<<< HEAD
     core.info(`Link to issue: ${inputs.linkToIssue}`);
-=======
->>>>>>> origin/develop
     core.info(`Skip labels: ${inputs.skipLabels || '(none)'}`);
     core.info(`GitHub API URL: ${githubApiUrl || '(default)'}`);
 
@@ -118,20 +105,12 @@ async function run(): Promise<void> {
       return;
     }
 
-<<<<<<< HEAD
     const prefix =
       inputs.useLabelPrefix && issueContext.labels.length > 0 ? issueContext.labels[0] : inputs.branchPrefix;
 
     const config: SanitizationConfig = {
       prefix,
       maxLength: inputs.maxLength
-=======
-    const config: SanitizationConfig = {
-      maxLength: inputs.maxLength,
-      prefix: inputs.branchPrefix,
-      useLabelPrefix: inputs.useLabelPrefix,
-      labelPrefix: inputs.useLabelPrefix && issueContext.labels.length > 0 ? issueContext.labels[0] : undefined
->>>>>>> origin/develop
     };
 
     const branchManager = new BranchManager(
@@ -141,7 +120,6 @@ async function run(): Promise<void> {
       githubApiUrl || undefined
     );
 
-<<<<<<< HEAD
     const result = await branchManager.createBranch(
       issueContext,
       config,
@@ -149,17 +127,11 @@ async function run(): Promise<void> {
       inputs.addComment,
       inputs.linkToIssue
     );
-=======
-    const result = await branchManager.createBranch(issueContext, config, inputs.baseBranch, inputs.addComment);
->>>>>>> origin/develop
 
     core.setOutput('branch_name', result.branchName);
     core.setOutput('original_name', result.originalName);
     core.setOutput('was_duplicate', result.wasDuplicate.toString());
-<<<<<<< HEAD
     core.setOutput('linked_to_issue', result.linkedToIssue.toString());
-=======
->>>>>>> origin/develop
 
     core.info('');
     core.info('Branch on Issue Action completed successfully.');

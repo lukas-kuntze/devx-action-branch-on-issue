@@ -72,11 +72,7 @@ export function truncateToMaxLength(text: string, maxLength: number): string {
  * 4. Removes all characters except alphanumeric, hyphens, and forward slashes
  * 5. Reduces multiple consecutive hyphens to a single hyphen
  * 6. Removes leading and trailing hyphens
-<<<<<<< HEAD
  * 7. Adds optional prefix (if provided)
-=======
- * 7. Adds optional prefix (with or without label prefix)
->>>>>>> origin/develop
  * 8. Truncates to maximum length
  *
  * @param text - Text to sanitize (typically an issue title)
@@ -85,11 +81,7 @@ export function truncateToMaxLength(text: string, maxLength: number): string {
  *
  * @example
  * ```typescript
-<<<<<<< HEAD
  * const config = { maxLength: 100, prefix: '' };
-=======
- * const config = { maxLength: 100, prefix: '', useLabelPrefix: false };
->>>>>>> origin/develop
  * sanitizeBranchName('FEAT-789 Neue Suchfunktion für Übersicht', config)
  * // Returns: 'feat-789-neue-suchfunktion-fuer-uebersicht'
  *
@@ -113,21 +105,10 @@ export function sanitizeBranchName(text: string, config: SanitizationConfig): st
 
   let finalName = sanitized;
 
-<<<<<<< HEAD
   if (config.prefix) {
     const sanitizedPrefix = sanitizeLabelPrefix(config.prefix);
     finalName = `${sanitizedPrefix}/${sanitized}`;
     core.debug(`Added prefix: "${finalName}"`);
-=======
-  if (config.useLabelPrefix && config.labelPrefix) {
-    const sanitizedLabelPrefix = sanitizeLabelPrefix(config.labelPrefix);
-    finalName = `${sanitizedLabelPrefix}/${sanitized}`;
-    core.debug(`Added label prefix: "${finalName}"`);
-  } else if (config.prefix) {
-    const sanitizedPrefix = sanitizeLabelPrefix(config.prefix);
-    finalName = `${sanitizedPrefix}/${sanitized}`;
-    core.debug(`Added custom prefix: "${finalName}"`);
->>>>>>> origin/develop
   }
 
   if (finalName.length > config.maxLength) {
@@ -160,7 +141,6 @@ function sanitizeLabelPrefix(prefix: string): string {
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
-<<<<<<< HEAD
 
 /**
  * Validates a branch name according to Git naming rules.
@@ -188,5 +168,3 @@ export function validateBranchName(branchName: string): boolean {
 
   return !invalidPatterns.some((pattern) => pattern.test(branchName));
 }
-=======
->>>>>>> origin/develop

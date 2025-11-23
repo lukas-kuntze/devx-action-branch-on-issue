@@ -36,10 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.convertUmlauts = convertUmlauts;
 exports.truncateToMaxLength = truncateToMaxLength;
 exports.sanitizeBranchName = sanitizeBranchName;
-<<<<<<< HEAD
 exports.validateBranchName = validateBranchName;
-=======
->>>>>>> origin/develop
 const core = __importStar(require("@actions/core"));
 /**
  * Mapping of German umlauts and special characters to their ASCII equivalents.
@@ -105,11 +102,7 @@ function truncateToMaxLength(text, maxLength) {
  * 4. Removes all characters except alphanumeric, hyphens, and forward slashes
  * 5. Reduces multiple consecutive hyphens to a single hyphen
  * 6. Removes leading and trailing hyphens
-<<<<<<< HEAD
  * 7. Adds optional prefix (if provided)
-=======
- * 7. Adds optional prefix (with or without label prefix)
->>>>>>> origin/develop
  * 8. Truncates to maximum length
  *
  * @param text - Text to sanitize (typically an issue title)
@@ -118,11 +111,7 @@ function truncateToMaxLength(text, maxLength) {
  *
  * @example
  * ```typescript
-<<<<<<< HEAD
  * const config = { maxLength: 100, prefix: '' };
-=======
- * const config = { maxLength: 100, prefix: '', useLabelPrefix: false };
->>>>>>> origin/develop
  * sanitizeBranchName('FEAT-789 Neue Suchfunktion für Übersicht', config)
  * // Returns: 'feat-789-neue-suchfunktion-fuer-uebersicht'
  *
@@ -141,22 +130,10 @@ function sanitizeBranchName(text, config) {
     sanitized = sanitized.replace(/^-+|-+$/g, '');
     core.debug(`After sanitization: "${sanitized}"`);
     let finalName = sanitized;
-<<<<<<< HEAD
     if (config.prefix) {
         const sanitizedPrefix = sanitizeLabelPrefix(config.prefix);
         finalName = `${sanitizedPrefix}/${sanitized}`;
         core.debug(`Added prefix: "${finalName}"`);
-=======
-    if (config.useLabelPrefix && config.labelPrefix) {
-        const sanitizedLabelPrefix = sanitizeLabelPrefix(config.labelPrefix);
-        finalName = `${sanitizedLabelPrefix}/${sanitized}`;
-        core.debug(`Added label prefix: "${finalName}"`);
-    }
-    else if (config.prefix) {
-        const sanitizedPrefix = sanitizeLabelPrefix(config.prefix);
-        finalName = `${sanitizedPrefix}/${sanitized}`;
-        core.debug(`Added custom prefix: "${finalName}"`);
->>>>>>> origin/develop
     }
     if (finalName.length > config.maxLength) {
         finalName = truncateToMaxLength(finalName, config.maxLength);
@@ -186,7 +163,6 @@ function sanitizeLabelPrefix(prefix) {
         .replace(/-+/g, '-')
         .replace(/^-+|-+$/g, '');
 }
-<<<<<<< HEAD
 /**
  * Validates a branch name according to Git naming rules.
  *
@@ -211,6 +187,4 @@ function validateBranchName(branchName) {
     ];
     return !invalidPatterns.some((pattern) => pattern.test(branchName));
 }
-=======
->>>>>>> origin/develop
 //# sourceMappingURL=sanitizer.js.map
