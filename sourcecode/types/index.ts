@@ -14,6 +14,9 @@ export interface ActionInputs {
   /** GitHub token used for authenticating API requests */
   githubToken: string;
 
+  /** If enabled, links the created branch to the issue using GraphQL API */
+  linkToIssue: boolean;
+
   /** Specifies the maximum allowed length for branch names */
   maxLength: number;
 
@@ -30,6 +33,9 @@ export interface ActionInputs {
 export interface ActionOutputs {
   /** The final name of the created branch */
   branchName: string;
+
+  /** Indicates whether the branch was successfully linked to the issue */
+  linkedToIssue: boolean;
 
   /** The sanitized branch name before duplicate handling was applied */
   originalName: string;
@@ -48,6 +54,9 @@ export interface BranchCreationResult {
   /** The SHA of the commit the branch points to */
   commitSha: string;
 
+  /** Whether the branch was successfully linked to the issue */
+  linkedToIssue: boolean;
+
   /** The original sanitized name before duplicate handling */
   originalName: string;
 
@@ -64,6 +73,9 @@ export interface IssueContext {
 
   /** Array of label names attached to the issue */
   labels: string[];
+
+  /** Issue Node ID (for GraphQL API) */
+  nodeId?: string;
 
   /** Issue number */
   number: number;
@@ -82,15 +94,9 @@ export interface IssueContext {
  * Configuration for branch name sanitization.
  */
 export interface SanitizationConfig {
-  /** The first label name (if useLabelPrefix is true) */
-  labelPrefix?: string;
-
   /** Maximum allowed length for the branch name */
   maxLength: number;
 
   /** Optional prefix to add to the branch name */
   prefix: string;
-
-  /** Whether to use the first label as prefix */
-  useLabelPrefix: boolean;
 }
