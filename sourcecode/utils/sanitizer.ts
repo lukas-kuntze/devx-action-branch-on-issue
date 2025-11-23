@@ -72,7 +72,7 @@ export function truncateToMaxLength(text: string, maxLength: number): string {
  * 4. Removes all characters except alphanumeric, hyphens, and forward slashes
  * 5. Reduces multiple consecutive hyphens to a single hyphen
  * 6. Removes leading and trailing hyphens
- * 7. Adds optional prefix (with or without label prefix)
+ * 7. Adds optional prefix (if provided)
  * 8. Truncates to maximum length
  *
  * @param text - Text to sanitize (typically an issue title)
@@ -81,7 +81,7 @@ export function truncateToMaxLength(text: string, maxLength: number): string {
  *
  * @example
  * ```typescript
- * const config = { maxLength: 100, prefix: '', useLabelPrefix: false };
+ * const config = { maxLength: 100, prefix: '' };
  * sanitizeBranchName('FEAT-789 Neue Suchfunktion für Übersicht', config)
  * // Returns: 'feat-789-neue-suchfunktion-fuer-uebersicht'
  *
@@ -105,14 +105,10 @@ export function sanitizeBranchName(text: string, config: SanitizationConfig): st
 
   let finalName = sanitized;
 
-  if (config.useLabelPrefix && config.labelPrefix) {
-    const sanitizedLabelPrefix = sanitizeLabelPrefix(config.labelPrefix);
-    finalName = `${sanitizedLabelPrefix}/${sanitized}`;
-    core.debug(`Added label prefix: "${finalName}"`);
-  } else if (config.prefix) {
+  if (config.prefix) {
     const sanitizedPrefix = sanitizeLabelPrefix(config.prefix);
     finalName = `${sanitizedPrefix}/${sanitized}`;
-    core.debug(`Added custom prefix: "${finalName}"`);
+    core.debug(`Added prefix: "${finalName}"`);
   }
 
   if (finalName.length > config.maxLength) {
@@ -144,4 +140,31 @@ function sanitizeLabelPrefix(prefix: string): string {
     .replace(/[^a-z0-9-]/g, '')
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Validates a branch name according to Git naming rules.
+ *
+ * @param branchName - Branch name to validate
+ * @returns True if the branch name is valid
+ */
+export function validateBranchName(branchName: string): boolean {
+  if (!branchName || branchName.trim().length === 0) {
+    return false;
+  }
+
+  const invalidPatterns = [
+    /^\./,
+    /\.\./,
+    /\/\//,
+    /@\{/,
+    /\\$/,
+    /\.lock$/,
+    /\/$/,
+    /^\//,
+    /[\x00-\x1f\x7f]/, // eslint-disable-line no-control-regex
+    /[ ~^:?*[]/
+  ];
+
+  return !invalidPatterns.some((pattern) => pattern.test(branchName));
 }

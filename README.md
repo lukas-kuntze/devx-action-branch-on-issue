@@ -1,13 +1,14 @@
 # Branch on Issue
 
 A lightweight GitHub Action that automatically creates branches when issues are created.
-Features intelligent name sanitization, German umlaut conversion, and robust duplicate handling.
+Features intelligent name sanitization, German umlaut conversion, automatic issue linking, and robust duplicate handling.
 
 ---
 
 ## Features
 
 - **Automated Branch Creation** – Creates branches automatically when issues are opened
+- **Automatic Issue Linking** – Links branches to issues in the Development section (GraphQL)
 - **Custom Prefixes** – Add custom prefixes like "feature/" or "bugfix/"
 - **Duplicate Handling** – Appends numeric suffixes (-1, -2, etc.) for duplicate branch names
 - **Enterprise Support** – Works with GitHub Enterprise Server
@@ -54,6 +55,7 @@ jobs:
 | `base_branch` | Base branch to create new branches from | ❌ No | `main` |
 | `branch_prefix` | Custom prefix for branch names (e.g., "feature") | ❌ No | `''` |
 | `github_token` | GitHub token for authentication | ✅ Yes | - |
+| `link_to_issue` | Link branch to issue in Development section | ❌ No | `true` |
 | `max_length` | Maximum branch name length | ❌ No | `100` |
 | `skip_labels` | Comma-separated labels to skip branch creation | ❌ No | `''` |
 | `use_label_prefix` | Use first issue label as branch prefix | ❌ No | `false` |
@@ -63,6 +65,7 @@ jobs:
 | Output | Description |
 |--------|-------------|
 | `branch_name` | Final name of the created branch |
+| `linked_to_issue` | Whether the branch was successfully linked to the issue |
 | `original_name` | Sanitized name before duplicate handling |
 | `was_duplicate` | Whether the branch name was modified due to duplication |
 
@@ -163,6 +166,19 @@ jobs:
     max_length: 50
 ```
 
+---
+
+### Example: Disable Issue Linking
+
+```yaml
+- name: Create branch without linking
+  uses: lukas-kuntze/devx-action-branch-on-issue@main
+  with:
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    link_to_issue: false
+```
+
+**Creates branch via REST API without linking to issue.**
 
 ---
 
@@ -209,6 +225,31 @@ If a branch with the sanitized name already exists, the action automatically app
 
 ---
 
+## Issue Linking
+
+By default, the action links created branches to issues in the **Development** section using GitHub's GraphQL API.
+
+**Benefits:**
+- ✅ Branches appear in the issue's Development section
+- ✅ Automatic tracking of related branches and PRs
+- ✅ Better visibility in GitHub UI
+
+**How it works:**
+1. If `link_to_issue: true` (default), uses GraphQL `createLinkedBranch` mutation
+2. If GraphQL fails, falls back to REST API (branch created without linking)
+3. If `link_to_issue: false`, uses REST API directly
+
+**Example with linking disabled:**
+```yaml
+- name: Create branch without linking
+  uses: lukas-kuntze/devx-action-branch-on-issue@main
+  with:
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    link_to_issue: false
+```
+
+---
+
 ## GitHub Enterprise Support
 
 ```yaml
@@ -229,7 +270,7 @@ If a branch with the sanitized name already exists, the action automatically app
 4. **Check Skip Labels** – Skips branch creation if issue has skip labels
 5. **Sanitize Name** – Converts title to valid Git branch name
 6. **Check Duplicates** – Appends numeric suffix if branch exists
-7. **Create Branch** – Creates branch from base branch via GitHub API
+7. **Create Branch** – Creates branch via GraphQL (with linking) or REST API (fallback)
 8. **Add Comment** – Posts branch name to issue (optional)
 9. **Set Outputs** – Provides branch name and metadata
 
@@ -248,8 +289,3 @@ If a branch with the sanitized name already exists, the action automatically app
 Created and maintained by **Lukas Kuntze**  
 Software Developer · Software Development & IT Services Kuntze  
 GitHub: [lukas-kuntze](https://github.com/lukas-kuntze)
-
----
-
-> Designed for internal automation and engineering workflows.  
-> Public use is possible but not officially supported.
