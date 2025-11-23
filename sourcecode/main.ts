@@ -15,6 +15,7 @@ function getInputs(): ActionInputs {
     baseBranch: core.getInput('base_branch', { required: false }) || 'main',
     branchPrefix: core.getInput('branch_prefix', { required: false }) || '',
     githubToken: core.getInput('github_token', { required: true }),
+    linkToIssue: core.getBooleanInput('link_to_issue'),
     maxLength: parseInt(core.getInput('max_length', { required: false }) || '100', 10),
     skipLabels: core.getInput('skip_labels', { required: false }) || '',
     useLabelPrefix: core.getBooleanInput('use_label_prefix')
@@ -39,6 +40,7 @@ function getIssueContext(): IssueContext {
     title: string;
     labels?: Array<{ name: string }>;
     user?: { login: string };
+    node_id?: string;
   };
 
   const labels = (issue.labels || []).map((label) => label.name);
@@ -49,7 +51,8 @@ function getIssueContext(): IssueContext {
     labels,
     author: issue.user?.login || 'unknown',
     owner: repo.owner,
-    repo: repo.repo
+    repo: repo.repo,
+    nodeId: issue.node_id
   };
 }
 
@@ -86,6 +89,7 @@ async function run(): Promise<void> {
     core.info(`Max length: ${inputs.maxLength}`);
     core.info(`Use label prefix: ${inputs.useLabelPrefix}`);
     core.info(`Add comment: ${inputs.addComment}`);
+    core.info(`Link to issue: ${inputs.linkToIssue}`);
     core.info(`Skip labels: ${inputs.skipLabels || '(none)'}`);
     core.info(`GitHub API URL: ${githubApiUrl || '(default)'}`);
 
@@ -101,11 +105,12 @@ async function run(): Promise<void> {
       return;
     }
 
+    const prefix =
+      inputs.useLabelPrefix && issueContext.labels.length > 0 ? issueContext.labels[0] : inputs.branchPrefix;
+
     const config: SanitizationConfig = {
-      maxLength: inputs.maxLength,
-      prefix: inputs.branchPrefix,
-      useLabelPrefix: inputs.useLabelPrefix,
-      labelPrefix: inputs.useLabelPrefix && issueContext.labels.length > 0 ? issueContext.labels[0] : undefined
+      prefix,
+      maxLength: inputs.maxLength
     };
 
     const branchManager = new BranchManager(
@@ -115,11 +120,18 @@ async function run(): Promise<void> {
       githubApiUrl || undefined
     );
 
-    const result = await branchManager.createBranch(issueContext, config, inputs.baseBranch, inputs.addComment);
+    const result = await branchManager.createBranch(
+      issueContext,
+      config,
+      inputs.baseBranch,
+      inputs.addComment,
+      inputs.linkToIssue
+    );
 
     core.setOutput('branch_name', result.branchName);
     core.setOutput('original_name', result.originalName);
     core.setOutput('was_duplicate', result.wasDuplicate.toString());
+    core.setOutput('linked_to_issue', result.linkedToIssue.toString());
 
     core.info('');
     core.info('Branch on Issue Action completed successfully.');
