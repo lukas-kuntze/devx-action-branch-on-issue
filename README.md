@@ -230,9 +230,9 @@ If a branch with the sanitized name already exists, the action automatically app
 By default, the action links created branches to issues in the **Development** section using GitHub's GraphQL API.
 
 **Benefits:**
-- ✅ Branches appear in the issue's Development section
-- ✅ Automatic tracking of related branches and PRs
-- ✅ Better visibility in GitHub UI
+- Branches appear in the issue's Development section
+- Automatic tracking of related branches and PRs
+- Better visibility in GitHub UI
 
 **How it works:**
 1. If `link_to_issue: true` (default), uses GraphQL `createLinkedBranch` mutation
