@@ -572,13 +572,8 @@ class OidcClient {
             const res = yield httpclient
                 .getJson(id_token_url)
                 .catch(error => {
-<<<<<<< HEAD
                 throw new Error(`Failed to get ID Token. \n 
         Error Code : ${error.statusCode}\n 
-=======
-                throw new Error(`Failed to get ID Token. \n
-        Error Code : ${error.statusCode}\n
->>>>>>> origin/main
         Error Message: ${error.message}`);
             });
             const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
@@ -29978,6 +29973,7 @@ const validators_1 = __nccwpck_require__(9994);
 function getInputs() {
     return {
         addComment: core.getBooleanInput('add_comment'),
+        autoAssign: core.getBooleanInput('auto_assign'),
         baseBranch: core.getInput('base_branch', { required: false }) || 'main',
         branchPrefix: core.getInput('branch_prefix', { required: false }) || '',
         githubToken: core.getInput('github_token', { required: true }),
@@ -30038,6 +30034,7 @@ async function run() {
         core.info(`Max length: ${inputs.maxLength}`);
         core.info(`Use label prefix: ${inputs.useLabelPrefix}`);
         core.info(`Add comment: ${inputs.addComment}`);
+        core.info(`Auto assign: ${inputs.autoAssign}`);
         core.info(`Link to issue: ${inputs.linkToIssue}`);
         core.info(`Skip labels: ${inputs.skipLabels || '(none)'}`);
         core.info(`GitHub API URL: ${githubApiUrl || '(default)'}`);
@@ -30056,7 +30053,7 @@ async function run() {
             maxLength: inputs.maxLength
         };
         const branchManager = new branch_manager_1.BranchManager(inputs.githubToken, issueContext.owner, issueContext.repo, githubApiUrl || undefined);
-        const result = await branchManager.createBranch(issueContext, config, inputs.baseBranch, inputs.addComment, inputs.linkToIssue);
+        const result = await branchManager.createBranch(issueContext, config, inputs.baseBranch, inputs.addComment, inputs.linkToIssue, inputs.autoAssign);
         core.setOutput('branch_name', result.branchName);
         core.setOutput('original_name', result.originalName);
         core.setOutput('was_duplicate', result.wasDuplicate.toString());
@@ -30145,9 +30142,10 @@ class BranchManager {
      * @param baseBranch - Base branch to create the new branch from
      * @param addComment - Whether to add a comment to the issue with the branch name
      * @param linkToIssue - Whether to link the branch to the issue using GraphQL
+     * @param autoAssign - Whether to automatically assign the issue author as assignee
      * @returns Branch creation result with branch name and metadata
      */
-    async createBranch(issueContext, config, baseBranch, addComment, linkToIssue = true) {
+    async createBranch(issueContext, config, baseBranch, addComment, linkToIssue = true, autoAssign = false) {
         core.info(`Creating branch for issue #${issueContext.number}: "${issueContext.title}"`);
         const sanitizedName = (0, sanitizer_1.sanitizeBranchName)(issueContext.title, config);
         core.debug(`Sanitized branch name: "${sanitizedName}"`);
@@ -30173,6 +30171,9 @@ class BranchManager {
         }
         else {
             await this.createBranchViaREST(finalBranchName, commitSha);
+        }
+        if (autoAssign && issueContext.author !== 'unknown') {
+            await this.assignIssueToAuthor(issueContext.number, issueContext.author);
         }
         if (addComment) {
             await this.addCommentToIssue(issueContext.number, finalBranchName, linkedToIssue);
@@ -30302,6 +30303,27 @@ class BranchManager {
         }
         catch (error) {
             throw new Error(`Failed to get SHA for base branch "${branchName}": ${error.message}`);
+        }
+    }
+    /**
+     * Assigns the issue to a specific user.
+     *
+     * @param issueNumber - Issue number to assign
+     * @param assignee - Username to assign the issue to
+     */
+    async assignIssueToAuthor(issueNumber, assignee) {
+        core.info(`Assigning issue #${issueNumber} to "${assignee}"...`);
+        try {
+            await this.octokit.rest.issues.addAssignees({
+                owner: this.owner,
+                repo: this.repo,
+                issue_number: issueNumber,
+                assignees: [assignee]
+            });
+            core.info(`Issue #${issueNumber} assigned to "${assignee}" successfully.`);
+        }
+        catch (error) {
+            core.warning(`Failed to assign issue #${issueNumber} to "${assignee}": ${error.message}`);
         }
     }
     /**
@@ -32469,11 +32491,7 @@ module.exports = parseParams
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-<<<<<<< HEAD
 /******/ 	
-=======
-/******/
->>>>>>> origin/main
 /******/ 	// The require function
 /******/ 	function __nccwpck_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -32487,11 +32505,7 @@ module.exports = parseParams
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-<<<<<<< HEAD
 /******/ 	
-=======
-/******/
->>>>>>> origin/main
 /******/ 		// Execute the module function
 /******/ 		var threw = true;
 /******/ 		try {
@@ -32500,7 +32514,6 @@ module.exports = parseParams
 /******/ 		} finally {
 /******/ 			if(threw) delete __webpack_module_cache__[moduleId];
 /******/ 		}
-<<<<<<< HEAD
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -32513,33 +32526,12 @@ module.exports = parseParams
 /******/ 	
 /************************************************************************/
 /******/ 	
-=======
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat */
-/******/
-/******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
-/******/
-/************************************************************************/
-/******/
->>>>>>> origin/main
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
 /******/ 	var __webpack_exports__ = __nccwpck_require__(966);
 /******/ 	module.exports = __webpack_exports__;
-<<<<<<< HEAD
 /******/ 	
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
-=======
-/******/
-/******/ })()
-;
-//# sourceMappingURL=index.js.map
->>>>>>> origin/main

@@ -34,10 +34,7 @@ export class BranchManager {
    * @param baseBranch - Base branch to create the new branch from
    * @param addComment - Whether to add a comment to the issue with the branch name
    * @param linkToIssue - Whether to link the branch to the issue using GraphQL
-<<<<<<< HEAD
    * @param autoAssign - Whether to automatically assign the issue author as assignee
-=======
->>>>>>> origin/main
    * @returns Branch creation result with branch name and metadata
    */
   async createBranch(
@@ -45,12 +42,8 @@ export class BranchManager {
     config: SanitizationConfig,
     baseBranch: string,
     addComment: boolean,
-<<<<<<< HEAD
     linkToIssue: boolean = true,
     autoAssign: boolean = false
-=======
-    linkToIssue: boolean = true
->>>>>>> origin/main
   ): Promise<BranchCreationResult> {
     core.info(`Creating branch for issue #${issueContext.number}: "${issueContext.title}"`);
 
@@ -84,13 +77,10 @@ export class BranchManager {
       await this.createBranchViaREST(finalBranchName, commitSha);
     }
 
-<<<<<<< HEAD
     if (autoAssign && issueContext.author !== 'unknown') {
       await this.assignIssueToAuthor(issueContext.number, issueContext.author);
     }
 
-=======
->>>>>>> origin/main
     if (addComment) {
       await this.addCommentToIssue(issueContext.number, finalBranchName, linkedToIssue);
     }
@@ -241,7 +231,6 @@ export class BranchManager {
   }
 
   /**
-<<<<<<< HEAD
    * Assigns the issue to a specific user.
    *
    * @param issueNumber - Issue number to assign
@@ -265,8 +254,6 @@ export class BranchManager {
   }
 
   /**
-=======
->>>>>>> origin/main
    * Adds a comment to an issue with the created branch name.
    *
    * @param issueNumber - Issue number to comment on

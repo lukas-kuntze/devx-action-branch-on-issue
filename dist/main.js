@@ -45,10 +45,7 @@ const validators_1 = require("./utils/validators");
 function getInputs() {
     return {
         addComment: core.getBooleanInput('add_comment'),
-<<<<<<< HEAD
         autoAssign: core.getBooleanInput('auto_assign'),
-=======
->>>>>>> origin/main
         baseBranch: core.getInput('base_branch', { required: false }) || 'main',
         branchPrefix: core.getInput('branch_prefix', { required: false }) || '',
         githubToken: core.getInput('github_token', { required: true }),
@@ -109,10 +106,7 @@ async function run() {
         core.info(`Max length: ${inputs.maxLength}`);
         core.info(`Use label prefix: ${inputs.useLabelPrefix}`);
         core.info(`Add comment: ${inputs.addComment}`);
-<<<<<<< HEAD
         core.info(`Auto assign: ${inputs.autoAssign}`);
-=======
->>>>>>> origin/main
         core.info(`Link to issue: ${inputs.linkToIssue}`);
         core.info(`Skip labels: ${inputs.skipLabels || '(none)'}`);
         core.info(`GitHub API URL: ${githubApiUrl || '(default)'}`);
@@ -131,11 +125,7 @@ async function run() {
             maxLength: inputs.maxLength
         };
         const branchManager = new branch_manager_1.BranchManager(inputs.githubToken, issueContext.owner, issueContext.repo, githubApiUrl || undefined);
-<<<<<<< HEAD
         const result = await branchManager.createBranch(issueContext, config, inputs.baseBranch, inputs.addComment, inputs.linkToIssue, inputs.autoAssign);
-=======
-        const result = await branchManager.createBranch(issueContext, config, inputs.baseBranch, inputs.addComment, inputs.linkToIssue);
->>>>>>> origin/main
         core.setOutput('branch_name', result.branchName);
         core.setOutput('original_name', result.originalName);
         core.setOutput('was_duplicate', result.wasDuplicate.toString());
@@ -149,8 +139,4 @@ async function run() {
     }
 }
 void run();
-<<<<<<< HEAD
 //# sourceMappingURL=main.js.map
-=======
-//# sourceMappingURL=main.js.map
->>>>>>> origin/main

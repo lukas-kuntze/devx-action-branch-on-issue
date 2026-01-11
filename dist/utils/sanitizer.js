@@ -187,8 +187,4 @@ function validateBranchName(branchName) {
     ];
     return !invalidPatterns.some((pattern) => pattern.test(branchName));
 }
-<<<<<<< HEAD
 //# sourceMappingURL=sanitizer.js.map
-=======
-//# sourceMappingURL=sanitizer.js.map
->>>>>>> origin/main

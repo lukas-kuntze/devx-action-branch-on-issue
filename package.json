@@ -1,6 +1,6 @@
 {
   "name": "devx-action-branch-on-issue",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A GitHub Action that automatically creates branches from issues with smart sanitization and duplicate handling.",
   "author": "Lukas Kuntze",
   "license": "MIT",

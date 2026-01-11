@@ -9,10 +9,7 @@ Features intelligent name sanitization, German umlaut conversion, automatic issu
 
 - **Automated Branch Creation** – Creates branches automatically when issues are opened
 - **Automatic Issue Linking** – Links branches to issues in the Development section (GraphQL)
-<<<<<<< HEAD
 - **Auto-Assign Author** – Optionally assign the issue author automatically when branch is created
-=======
->>>>>>> origin/main
 - **Custom Prefixes** – Add custom prefixes like "feature/" or "bugfix/"
 - **Duplicate Handling** – Appends numeric suffixes (-1, -2, etc.) for duplicate branch names
 - **Enterprise Support** – Works with GitHub Enterprise Server
@@ -56,10 +53,7 @@ jobs:
 | Input | Description | Required | Default |
 |--------|-------------|-----------|----------|
 | `add_comment` | Add comment to issue with branch name | ❌ No | `true` |
-<<<<<<< HEAD
 | `auto_assign` | Automatically assign issue author as assignee | ❌ No | `false` |
-=======
->>>>>>> origin/main
 | `base_branch` | Base branch to create new branches from | ❌ No | `main` |
 | `branch_prefix` | Custom prefix for branch names (e.g., "feature") | ❌ No | `''` |
 | `github_token` | GitHub token for authentication | ✅ Yes | - |
@@ -190,7 +184,6 @@ jobs:
 
 ---
 
-<<<<<<< HEAD
 ### Example: Auto-Assign Issue Author
 
 ```yaml
@@ -205,8 +198,6 @@ jobs:
 
 ---
 
-=======
->>>>>>> origin/main
 ## Sanitization Process
 
 The action performs the following transformations:
@@ -255,15 +246,9 @@ If a branch with the sanitized name already exists, the action automatically app
 By default, the action links created branches to issues in the **Development** section using GitHub's GraphQL API.
 
 **Benefits:**
-<<<<<<< HEAD
 - ✅ Branches appear in the issue's Development section
 - ✅ Automatic tracking of related branches and PRs
 - ✅ Better visibility in GitHub UI
-=======
-- Branches appear in the issue's Development section
-- Automatic tracking of related branches and PRs
-- Better visibility in GitHub UI
->>>>>>> origin/main
 
 **How it works:**
 1. If `link_to_issue: true` (default), uses GraphQL `createLinkedBranch` mutation
@@ -302,14 +287,9 @@ By default, the action links created branches to issues in the **Development** s
 5. **Sanitize Name** – Converts title to valid Git branch name
 6. **Check Duplicates** – Appends numeric suffix if branch exists
 7. **Create Branch** – Creates branch via GraphQL (with linking) or REST API (fallback)
-<<<<<<< HEAD
 8. **Auto-Assign** – Assigns issue author as assignee (optional)
 9. **Add Comment** – Posts branch name to issue (optional)
 10. **Set Outputs** – Provides branch name and metadata
-=======
-8. **Add Comment** – Posts branch name to issue (optional)
-9. **Set Outputs** – Provides branch name and metadata
->>>>>>> origin/main
 
 ---
 
