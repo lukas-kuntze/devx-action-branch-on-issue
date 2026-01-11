@@ -5,6 +5,9 @@ export interface ActionInputs {
   /** If enabled, adds a comment to the issue containing the generated branch name */
   addComment: boolean;
 
+  /** If enabled, automatically assigns the issue author as the assignee */
+  autoAssign: boolean;
+
   /** The base branch from which new branches will be created */
   baseBranch: string;
 
