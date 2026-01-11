@@ -34,6 +34,7 @@ export class BranchManager {
    * @param baseBranch - Base branch to create the new branch from
    * @param addComment - Whether to add a comment to the issue with the branch name
    * @param linkToIssue - Whether to link the branch to the issue using GraphQL
+   * @param autoAssign - Whether to automatically assign the issue author as assignee
    * @returns Branch creation result with branch name and metadata
    */
   async createBranch(
@@ -41,7 +42,8 @@ export class BranchManager {
     config: SanitizationConfig,
     baseBranch: string,
     addComment: boolean,
-    linkToIssue: boolean = true
+    linkToIssue: boolean = true,
+    autoAssign: boolean = false
   ): Promise<BranchCreationResult> {
     core.info(`Creating branch for issue #${issueContext.number}: "${issueContext.title}"`);
 
@@ -73,6 +75,10 @@ export class BranchManager {
       }
     } else {
       await this.createBranchViaREST(finalBranchName, commitSha);
+    }
+
+    if (autoAssign && issueContext.author !== 'unknown') {
+      await this.assignIssueToAuthor(issueContext.number, issueContext.author);
     }
 
     if (addComment) {
@@ -221,6 +227,29 @@ export class BranchManager {
       return data.commit.sha;
     } catch (error) {
       throw new Error(`Failed to get SHA for base branch "${branchName}": ${(error as Error).message}`);
+    }
+  }
+
+  /**
+   * Assigns the issue to a specific user.
+   *
+   * @param issueNumber - Issue number to assign
+   * @param assignee - Username to assign the issue to
+   */
+  async assignIssueToAuthor(issueNumber: number, assignee: string): Promise<void> {
+    core.info(`Assigning issue #${issueNumber} to "${assignee}"...`);
+
+    try {
+      await this.octokit.rest.issues.addAssignees({
+        owner: this.owner,
+        repo: this.repo,
+        issue_number: issueNumber,
+        assignees: [assignee]
+      });
+
+      core.info(`Issue #${issueNumber} assigned to "${assignee}" successfully.`);
+    } catch (error) {
+      core.warning(`Failed to assign issue #${issueNumber} to "${assignee}": ${(error as Error).message}`);
     }
   }
 

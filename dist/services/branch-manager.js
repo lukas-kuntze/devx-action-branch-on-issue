@@ -65,9 +65,10 @@ class BranchManager {
      * @param baseBranch - Base branch to create the new branch from
      * @param addComment - Whether to add a comment to the issue with the branch name
      * @param linkToIssue - Whether to link the branch to the issue using GraphQL
+     * @param autoAssign - Whether to automatically assign the issue author as assignee
      * @returns Branch creation result with branch name and metadata
      */
-    async createBranch(issueContext, config, baseBranch, addComment, linkToIssue = true) {
+    async createBranch(issueContext, config, baseBranch, addComment, linkToIssue = true, autoAssign = false) {
         core.info(`Creating branch for issue #${issueContext.number}: "${issueContext.title}"`);
         const sanitizedName = (0, sanitizer_1.sanitizeBranchName)(issueContext.title, config);
         core.debug(`Sanitized branch name: "${sanitizedName}"`);
@@ -93,6 +94,9 @@ class BranchManager {
         }
         else {
             await this.createBranchViaREST(finalBranchName, commitSha);
+        }
+        if (autoAssign && issueContext.author !== 'unknown') {
+            await this.assignIssueToAuthor(issueContext.number, issueContext.author);
         }
         if (addComment) {
             await this.addCommentToIssue(issueContext.number, finalBranchName, linkedToIssue);
@@ -222,6 +226,27 @@ class BranchManager {
         }
         catch (error) {
             throw new Error(`Failed to get SHA for base branch "${branchName}": ${error.message}`);
+        }
+    }
+    /**
+     * Assigns the issue to a specific user.
+     *
+     * @param issueNumber - Issue number to assign
+     * @param assignee - Username to assign the issue to
+     */
+    async assignIssueToAuthor(issueNumber, assignee) {
+        core.info(`Assigning issue #${issueNumber} to "${assignee}"...`);
+        try {
+            await this.octokit.rest.issues.addAssignees({
+                owner: this.owner,
+                repo: this.repo,
+                issue_number: issueNumber,
+                assignees: [assignee]
+            });
+            core.info(`Issue #${issueNumber} assigned to "${assignee}" successfully.`);
+        }
+        catch (error) {
+            core.warning(`Failed to assign issue #${issueNumber} to "${assignee}": ${error.message}`);
         }
     }
     /**

@@ -1,0 +1,25 @@
+name: Create Branch on Issue
+run-name: Create Branch for ${{ github.event.issue.title }}
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  create-branch:
+    name: Create Branch
+    permissions:
+      contents: write
+      issues: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Create branch from issue
+        uses: ./
+        with:
+          add_comment: true
+          auto_assign: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          link_to_issue: true
