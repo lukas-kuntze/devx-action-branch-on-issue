@@ -12,14 +12,11 @@ inputs:
     default: 'true'
     required: false
 
-<<<<<<< HEAD
   auto_assign:
     description: 'If enabled, automatically assigns the issue author as the assignee when the branch is created.'
     default: 'false'
     required: false
 
-=======
->>>>>>> origin/main
   base_branch:
     description: 'The base branch from which new branches will be created.'
     default: 'main'

@@ -12,10 +12,7 @@ import { ActionInputs, IssueContext, SanitizationConfig } from './types';
 function getInputs(): ActionInputs {
   return {
     addComment: core.getBooleanInput('add_comment'),
-<<<<<<< HEAD
     autoAssign: core.getBooleanInput('auto_assign'),
-=======
->>>>>>> origin/main
     baseBranch: core.getInput('base_branch', { required: false }) || 'main',
     branchPrefix: core.getInput('branch_prefix', { required: false }) || '',
     githubToken: core.getInput('github_token', { required: true }),
@@ -93,10 +90,7 @@ async function run(): Promise<void> {
     core.info(`Max length: ${inputs.maxLength}`);
     core.info(`Use label prefix: ${inputs.useLabelPrefix}`);
     core.info(`Add comment: ${inputs.addComment}`);
-<<<<<<< HEAD
     core.info(`Auto assign: ${inputs.autoAssign}`);
-=======
->>>>>>> origin/main
     core.info(`Link to issue: ${inputs.linkToIssue}`);
     core.info(`Skip labels: ${inputs.skipLabels || '(none)'}`);
     core.info(`GitHub API URL: ${githubApiUrl || '(default)'}`);
@@ -133,12 +127,8 @@ async function run(): Promise<void> {
       config,
       inputs.baseBranch,
       inputs.addComment,
-<<<<<<< HEAD
       inputs.linkToIssue,
       inputs.autoAssign
-=======
-      inputs.linkToIssue
->>>>>>> origin/main
     );
 
     core.setOutput('branch_name', result.branchName);
