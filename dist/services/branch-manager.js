@@ -65,10 +65,16 @@ class BranchManager {
      * @param baseBranch - Base branch to create the new branch from
      * @param addComment - Whether to add a comment to the issue with the branch name
      * @param linkToIssue - Whether to link the branch to the issue using GraphQL
+<<<<<<< HEAD
      * @param autoAssign - Whether to automatically assign the issue author as assignee
      * @returns Branch creation result with branch name and metadata
      */
     async createBranch(issueContext, config, baseBranch, addComment, linkToIssue = true, autoAssign = false) {
+=======
+     * @returns Branch creation result with branch name and metadata
+     */
+    async createBranch(issueContext, config, baseBranch, addComment, linkToIssue = true) {
+>>>>>>> origin/main
         core.info(`Creating branch for issue #${issueContext.number}: "${issueContext.title}"`);
         const sanitizedName = (0, sanitizer_1.sanitizeBranchName)(issueContext.title, config);
         core.debug(`Sanitized branch name: "${sanitizedName}"`);
@@ -95,9 +101,12 @@ class BranchManager {
         else {
             await this.createBranchViaREST(finalBranchName, commitSha);
         }
+<<<<<<< HEAD
         if (autoAssign && issueContext.author !== 'unknown') {
             await this.assignIssueToAuthor(issueContext.number, issueContext.author);
         }
+=======
+>>>>>>> origin/main
         if (addComment) {
             await this.addCommentToIssue(issueContext.number, finalBranchName, linkedToIssue);
         }
@@ -229,6 +238,7 @@ class BranchManager {
         }
     }
     /**
+<<<<<<< HEAD
      * Assigns the issue to a specific user.
      *
      * @param issueNumber - Issue number to assign
@@ -250,6 +260,8 @@ class BranchManager {
         }
     }
     /**
+=======
+>>>>>>> origin/main
      * Adds a comment to an issue with the created branch name.
      *
      * @param issueNumber - Issue number to comment on
@@ -275,4 +287,8 @@ class BranchManager {
     }
 }
 exports.BranchManager = BranchManager;
+<<<<<<< HEAD
 //# sourceMappingURL=branch-manager.js.map
+=======
+//# sourceMappingURL=branch-manager.js.map
+>>>>>>> origin/main
