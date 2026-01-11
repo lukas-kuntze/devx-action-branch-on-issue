@@ -9,6 +9,7 @@ Features intelligent name sanitization, German umlaut conversion, automatic issu
 
 - **Automated Branch Creation** – Creates branches automatically when issues are opened
 - **Automatic Issue Linking** – Links branches to issues in the Development section (GraphQL)
+- **Auto-Assign Author** – Optionally assign the issue author automatically when branch is created
 - **Custom Prefixes** – Add custom prefixes like "feature/" or "bugfix/"
 - **Duplicate Handling** – Appends numeric suffixes (-1, -2, etc.) for duplicate branch names
 - **Enterprise Support** – Works with GitHub Enterprise Server
@@ -52,6 +53,7 @@ jobs:
 | Input | Description | Required | Default |
 |--------|-------------|-----------|----------|
 | `add_comment` | Add comment to issue with branch name | ❌ No | `true` |
+| `auto_assign` | Automatically assign issue author as assignee | ❌ No | `false` |
 | `base_branch` | Base branch to create new branches from | ❌ No | `main` |
 | `branch_prefix` | Custom prefix for branch names (e.g., "feature") | ❌ No | `''` |
 | `github_token` | GitHub token for authentication | ✅ Yes | - |
@@ -182,6 +184,20 @@ jobs:
 
 ---
 
+### Example: Auto-Assign Issue Author
+
+```yaml
+- name: Create branch and assign author
+  uses: lukas-kuntze/devx-action-branch-on-issue@main
+  with:
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    auto_assign: true
+```
+
+**Automatically assigns the issue author as the assignee when the branch is created.**
+
+---
+
 ## Sanitization Process
 
 The action performs the following transformations:
@@ -271,8 +287,9 @@ By default, the action links created branches to issues in the **Development** s
 5. **Sanitize Name** – Converts title to valid Git branch name
 6. **Check Duplicates** – Appends numeric suffix if branch exists
 7. **Create Branch** – Creates branch via GraphQL (with linking) or REST API (fallback)
-8. **Add Comment** – Posts branch name to issue (optional)
-9. **Set Outputs** – Provides branch name and metadata
+8. **Auto-Assign** – Assigns issue author as assignee (optional)
+9. **Add Comment** – Posts branch name to issue (optional)
+10. **Set Outputs** – Provides branch name and metadata
 
 ---
 
